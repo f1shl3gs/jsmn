@@ -1,16 +1,16 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use jsmn::{JsonParser, Token};
+use jsmn::{JsonParser, Kind, Token};
 
 pub fn criterion_benchmark(c: &mut Criterion) {
     c.bench_function("twitter", |b| {
-        let data = include_str!("../testdata/twitter.json");
+        let data = include_bytes!("../testdata/twitter.json");
 
         b.iter(|| {
-            let mut parser = JsonParser::new();
+            let mut parser = JsonParser::default();
             let mut tokens = Vec::new();
-            tokens.resize(27259, Token::default());
+            tokens.resize(27259, Token::new(Kind::Str, 0, 0));
 
-            parser.parse(data.as_bytes(), &mut tokens).unwrap();
+            parser.parse(data, &mut tokens).unwrap();
         })
     });
 }
